@@ -48,7 +48,7 @@ module.exports = function (app, db) {
               id: profile.id,
               name: profile.displayName || 'New User',
               photo: profile.photos[0].value || '',
-              email: profile.emails[0].value || 'No public email',
+              email: profile.email || 'No public email',
               created_on: new Date(),
               provider: profile.provider || ''
           },$set:{
