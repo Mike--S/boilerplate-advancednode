@@ -18,14 +18,13 @@ mongo.connect(process.env.MONGO_URI, (err, db) => {
       console.log('Database error: ' + err);
   } else {
       console.log('Successful database connection');
-
-      auth(app, db)
-      routes(app, db);
-      
       app.set('view engine', 'pug');
       app.use('/public', express.static(process.cwd() + '/public'));
       app.use(bodyParser.json());
       app.use(bodyParser.urlencoded({ extended: true }));
+
+      auth(app, db)
+      routes(app, db);
       
       app.listen(process.env.PORT || 3000, () => {
         console.log("Listening on port " + (process.env.PORT || 3000));

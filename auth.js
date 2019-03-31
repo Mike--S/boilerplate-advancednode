@@ -39,7 +39,7 @@ module.exports = function (app, db) {
       callbackURL: "https://swamp-rhythm.glitch.me/auth/github/callback"
     },
     function(accessToken, refreshToken, profile, cb) {
-        console.log(profile);
+        console.log(profile); 
         //Database logic here with callback containing our user object
         db.collection('socialusers').findAndModify(
           {id: profile.id},
