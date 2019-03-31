@@ -4,6 +4,8 @@ const session = require('express-session');
 const LocalStrategy = require('passport-local');
 const bcrypt = require('bcrypt');
 const GitHubStrategy = require('passport-github').Strategy;
+const dotenv = require('dotenv');
+dotenv.config();
 
 passport.serializeUser((user, done) => { 
   done(null, user._id);
@@ -29,7 +31,6 @@ passport.use(new LocalStrategy(
     });
   }
 ));
-
 passport.use(new GitHubStrategy({
     clientID: process.env.GIT_CLIENT_ID,
     clientSecret: process.env.GIT_CLIENT_SECRET,
