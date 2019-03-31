@@ -32,13 +32,33 @@ passport.use(new LocalStrategy(
   }
 ));
 passport.use(new GitHubStrategy({
-    clientID: process.env.GIT_CLIENT_ID,
-    clientSecret: process.env.GIT_CLIENT_SECRET,
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
     callbackURL: "https://swamp-rhythm.glitch.me/auth/github/callback"
   },
   function(accessToken, refreshToken, profile, cb) {
       console.log(profile);
       //Database logic here with callback containing our user object
+      db.collection('socialusers').findAndModify(
+        {id: profile.id},
+        {},
+        {$setOnInsert:{
+            id: profile.id,
+            name: profile.displayName || 'New User',
+            photo: profile.photos[0].value || '',
+            email: profile.emails[0].value || 'No public email',
+            created_on: new Date(),
+            provider: profile.provider || ''
+        },$set:{
+            last_login: new Date()
+        },$inc:{
+            login_count: 1
+        }},
+        {upsert:true, new: true},
+        (err, doc) => {
+            return cb(null, doc.value);
+        }
+    );
   }
 ));
 
