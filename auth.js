@@ -48,7 +48,7 @@ module.exports = function (app, db) {
     .get((req, res) => {
       req.logout();
       res.redirect('/');
-    });
+  });
 
   app.route('/register')
     .post((req, res, next) => {
@@ -76,4 +76,13 @@ module.exports = function (app, db) {
         res.redirect('/profile');
       }
     );
+  
+  app.route('/auth/github')
+    .get(passport.authenticate('github'), (req, res) => {
+    });
+  
+  app.route('/auth/github/callback')
+    .get(passport.authenticate('github', { failureRedirect: '/' }), (req, res) => {
+      res.redirect('/profile');
+    });
 }
