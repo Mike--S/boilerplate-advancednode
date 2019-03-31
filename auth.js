@@ -3,6 +3,7 @@ const ObjectID = require('mongodb').ObjectID;
 const session = require('express-session');
 const LocalStrategy = require('passport-local');
 const bcrypt = require('bcrypt');
+const GitHubStrategy = require('passport-github').Strategy;
 
 passport.serializeUser((user, done) => { 
   done(null, user._id);
@@ -29,6 +30,17 @@ passport.use(new LocalStrategy(
   }
 ));
 
+passport.use(new GitHubStrategy({
+    clientID: process.env.GIT_CLIENT_ID,
+    clientSecret: process.env.GIT_CLIENT_SECRET,
+    callbackURL: "https://swamp-rhythm.glitch.me/auth/github/callback"
+  },
+  function(accessToken, refreshToken, profile, cb) {
+      console.log(profile);
+      //Database logic here with callback containing our user object
+  }
+));
+
 module.exports = function (app, db) {
   app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -38,6 +50,14 @@ module.exports = function (app, db) {
   
   app.use(passport.initialize());
   app.use(passport.session());
+
+  app.route('/auth/github')
+    .get(passport.authenticate('github'));
+
+  app.route('/auth/github/callback')
+    .get(passport.authenticate('github', { failureRedirect: '/' }), (req,res) => {
+      res.redirect('/profile');
+    });
 
   app.route('/login')
     .post(passport.authenticate('local', { failureRedirect: '/' }), (req, res) => {
@@ -76,13 +96,4 @@ module.exports = function (app, db) {
         res.redirect('/profile');
       }
     );
-  
-  app.route('/auth/github')
-    .get(passport.authenticate('github'), (req, res) => {
-    });
-  
-  app.route('/auth/github/callback')
-    .get(passport.authenticate('github', { failureRedirect: '/' }), (req, res) => {
-      res.redirect('/profile');
-    });
 }

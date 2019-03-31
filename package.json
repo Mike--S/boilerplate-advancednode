@@ -21,6 +21,7 @@
 		"mongodb": "^2.2.22",
 		"mongoose": "^5.4.19",
 		"passport": "^0.4.0",
+		"passport-github": "^1.1.0",
 		"passport-local": "^1.0.0",
 		"pug": "^2.0.3"
 	},
